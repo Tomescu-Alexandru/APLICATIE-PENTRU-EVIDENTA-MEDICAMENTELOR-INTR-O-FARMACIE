@@ -2,7 +2,8 @@ package model;
 
 import lombok.*;
 
-import java.util.Date;
+import java.sql.Date;
+
 
 @Setter
 @Getter
@@ -13,6 +14,7 @@ import java.util.Date;
 
 public class Angajat {
 
+    private int idAngajat;
     private String nume;
     private String prenume;
     private String cnp;

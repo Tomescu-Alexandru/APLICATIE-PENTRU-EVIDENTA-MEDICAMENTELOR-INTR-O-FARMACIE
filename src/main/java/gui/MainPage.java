@@ -1,67 +1,123 @@
 package gui;
 
 import controller.AngajatController;
+import controller.MedicamentController;
 import model.Angajat;
 import main.Main;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 public class MainPage extends JFrame {
 
-    JPanel jPanel = new JPanel(new GridLayout(7,2));
+    JPanel jPanel = new JPanel(new GridLayout(getRanduri(),1));
+    JPanel angajatPanel;
+    JPanel  medicamentPanel;
+    JPanel  simplePanel;
+    JPanel complexPanel;
     AngajatController angajatController = new AngajatController();
-    JLabel [] Campuri = new JLabel[7];
-    JLabel [] Atribute = new JLabel[7];
+    EmptyBorder border = new EmptyBorder(0, 10, 0, 0);
+    MedicamentController medicamentController = new MedicamentController();
 
+    public static boolean fromUpdate;
 
     public MainPage(){
         setTitle("Login Page");
-        setSize(300, 500);
+        setSize(1920, 1080);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initPanel();
-        add(jPanel);
         setVisible(true);
     }
   
     private void initPanel(){
-        Angajat angajat = angajatController.findAngajatById(Main.getCurrentUser().getIdAngajat());
 
-        Campuri[0]= new JLabel("Nume: ");
-        Atribute[0]= new JLabel(angajat.getNume());
-        jPanel.add(Campuri[0]);
-        jPanel.add(Atribute[0]);
 
-        Campuri[1]= new JLabel("Prenume: ");
-        Atribute[1]= new JLabel(angajat.getPrenume());
-        jPanel.add(Campuri[1]);
-        jPanel.add(Atribute[1]);
+    }
 
-        Campuri[2]= new JLabel("CNP: ");
-        Atribute[2]= new JLabel(angajat.getCnp());
-        jPanel.add(Campuri[2]);
-        jPanel.add(Atribute[2]);
+    private int getRanduri(){
+        if(Main.getCurrentUser().getRol()=="admin")
+            return 4;
+        else return 3;
+    }
 
-        Campuri[3]= new JLabel("Adresa: ");
-        Atribute[3]= new JLabel(angajat.getAdresa());
-        jPanel.add(Campuri[3]);
-        jPanel.add(Atribute[3]);
+    private void initMedicamente()
+    {
+        JButton insert= new JButton("Insert");
+        insert.setBorder(border);
+        JButton update= new JButton("Update");
+        insert.setBorder(border);
+        JButton delete= new JButton("Delete");
+        delete.setBorder(border);
 
-        Campuri[4]= new JLabel("Sex: ");
-        Atribute[4]= new JLabel(angajat.getSex());
-        jPanel.add(Campuri[4]);
-        jPanel.add(Atribute[4]);
+        medicamentPanel = new JPanel(new GridLayout(1,2));
+        JPanel butoane = new JPanel(new GridLayout(4,1));
 
-        Campuri[5]= new JLabel("Data nasterii: ");
-        Atribute[5]= new JLabel(angajat.getDataNasterii().toString());
-        jPanel.add(Campuri[5]);
-        jPanel.add(Atribute[5]);
+        butoane.add(insert);
+        butoane.add(update);
+        butoane.add(delete);
 
-        Campuri[6]= new JLabel("Salariu: ");
-        Atribute[6]= new JLabel(Integer.toString(angajat.getSalariu()));
-        jPanel.add(Campuri[6]);
-        jPanel.add(Atribute[6]);
+        JTextField deleteId= new JTextField();
+        butoane.add(deleteId);
+
+        medicamentPanel.add(butoane);
+
+        insert.addActionListener(e->{
+            new MedicamentPage();
+        });
+
+        update.addActionListener(e->{
+            fromUpdate=true;
+            new MedicamentPage();
+        });
+
+        delete.addActionListener(e->{
+            medicamentController.deleteMedicament(Integer.getInteger(deleteId.getText()));
+        });
+
+        JTable tabelAngajati;
+
+
+
+    }
+
+    private void initAngajat()
+    {
+        JButton insert= new JButton("Insert");
+        insert.setBorder(border);
+        JButton update= new JButton("Update");
+        insert.setBorder(border);
+        JButton delete= new JButton("Delete");
+        delete.setBorder(border);
+
+        angajatPanel = new JPanel(new GridLayout(1,2));
+        JPanel butoane = new JPanel(new GridLayout(4,1));
+
+        butoane.add(insert);
+        butoane.add(update);
+        butoane.add(delete);
+
+        JTextField deleteId= new JTextField();
+        butoane.add(deleteId);
+
+        medicamentPanel.add(butoane);
+
+        insert.addActionListener(e->{
+            new AngajatPage();
+        });
+
+        update.addActionListener(e->{
+            fromUpdate=true;
+            new MedicamentPage();
+        });
+
+        delete.addActionListener(e->{
+            angajatController.deleteAngajat(Integer.getInteger(deleteId.getText()));
+        });
+
+
+
 
     }
 }

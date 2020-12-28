@@ -12,6 +12,8 @@ public class AngajatDao {
     Connection connection;
 
     PreparedStatement insertQuery;
+    PreparedStatement updateQuery;
+    PreparedStatement deleteQuery;
     PreparedStatement selectQueryById;
 
     public AngajatDao (Connection connection){
@@ -19,6 +21,11 @@ public class AngajatDao {
 
         try {
             selectQueryById = connection.prepareStatement("SELECT * FROM Angajat WHERE IDAngajat = ?");
+            insertQuery= connection.prepareStatement("INSERT INTO Angajat VALUES(null, ?,?,?,?,?,?,?,?)");
+            updateQuery= connection.prepareStatement("UPDATE Angajat" +
+                    "SET Nume=?, Prenume=?, CNP=?, Adresa=?, Sex=?, DataNasterii=?, Salariu=?, IDPunctLucru=? " +
+                            "WHERE IDAngajat=?");
+            deleteQuery= connection.prepareStatement("DELETE FROM Angajat WHERE IDAngajat=?");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -31,6 +38,7 @@ public class AngajatDao {
 
             while(resultSet.next()){
                 Angajat angajat = new Angajat(
+                        resultSet.getInt("IDAngajat"),
                         resultSet.getString("Nume"),
                         resultSet.getString("Prenume"),
                         resultSet.getString("CNP"),
@@ -47,5 +55,55 @@ public class AngajatDao {
             throwables.printStackTrace();
         }
         return new Angajat();
+    }
+
+    public boolean insert(Angajat angajat){
+        try {
+            insertQuery.setString(1,angajat.getNume());
+            insertQuery.setString(2, angajat.getPrenume());
+            insertQuery.setString(3, angajat.getCnp());
+            insertQuery.setString(4, angajat.getAdresa());
+            insertQuery.setString(5, angajat.getSex());
+            insertQuery.setDate(6, angajat.getDataNasterii());
+            insertQuery.setInt(7, angajat.getSalariu());
+            insertQuery.setInt(8, angajat.getIdPunctLucru());
+
+            return insertQuery.executeUpdate()!=0;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean update(Angajat angajat){
+
+        try {
+            updateQuery.setString(1,angajat.getNume());
+            updateQuery.setString(2, angajat.getPrenume());
+            updateQuery.setString(3, angajat.getCnp());
+            updateQuery.setString(4, angajat.getAdresa());
+            updateQuery.setString(5, angajat.getSex());
+            updateQuery.setDate(6, angajat.getDataNasterii());
+            updateQuery.setInt(7, angajat.getSalariu());
+            updateQuery.setInt(8, angajat.getIdPunctLucru());
+            updateQuery.setInt(9, angajat.getIdAngajat());
+
+            return updateQuery.executeUpdate()!=0;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean delete(int id){
+        try {
+            deleteQuery.setInt(1,id);
+
+            return deleteQuery.executeUpdate()!=0;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+            return false;
     }
 }

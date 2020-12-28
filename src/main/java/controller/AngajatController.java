@@ -16,4 +16,10 @@ public class AngajatController {
     }
 
     public Angajat findAngajatById(int id) {return angajatDao.findbyId(id); }
+
+    public boolean insertAngajat(Angajat angajat){ return angajatDao.insert(angajat);}
+
+    public boolean updateAngajat(Angajat angajat){return angajatDao.update(angajat);}
+
+    public boolean deleteAngajat(int id){return angajatDao.delete(id);}
 }
