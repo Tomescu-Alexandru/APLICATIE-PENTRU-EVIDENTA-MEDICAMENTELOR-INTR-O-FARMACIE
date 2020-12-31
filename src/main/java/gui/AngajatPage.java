@@ -18,7 +18,7 @@ public class AngajatPage extends JFrame {
     EmptyBorder border = new EmptyBorder(0, 10, 0, 0);
 
     JButton insert, update;
-    AngajatController angajatController;
+    AngajatController angajatController= new AngajatController();
 
     public AngajatPage() {
         initDefaults();
@@ -30,7 +30,7 @@ public class AngajatPage extends JFrame {
 
 
     private void initDefaults() {
-        setTitle("Login Page");
+        setTitle("Angajat Page");
         setSize(500, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -103,27 +103,72 @@ public class AngajatPage extends JFrame {
         insert.addActionListener(e->{
             Angajat angajat= fromTextToAngajat();
             angajatController.insertAngajat(angajat);
+            dispose();
         });
 
         update.addActionListener(e->{
             Angajat angajat= fromTextToAngajat();
             angajatController.updateAngajat(angajat);
+            dispose();
         });
     }
 
     private Angajat fromTextToAngajat(){
-        Angajat angajat = new Angajat(
-                Integer.getInteger(idAngajatText.getText()),
+        Angajat angajatCurent= angajatController.findAngajatById(Integer.parseInt(idAngajatText.getText()));
+        Angajat angajat = new Angajat();
+        angajat.setIdAngajat(angajatCurent.getIdAngajat());
+
+        if( numeText.getText().isEmpty())
+            angajat.setNume(angajatCurent.getNume());
+        else
+            angajat.setNume(numeText.getText());
+
+        if(prenumeText.getText().isEmpty())
+            angajat.setPrenume(angajatCurent.getPrenume());
+        else
+            angajat.setPrenume(prenumeText.getText());
+
+        if(cnpText.getText().isEmpty())
+            angajat.setCnp(angajatCurent.getCnp());
+        else
+            angajat.setCnp(cnpText.getText());
+
+        if(adresaText.getText().isEmpty())
+            angajat.setAdresa(angajatCurent.getAdresa());
+        else
+            angajat.setAdresa(adresaText.getText());
+
+        if(sexText.getText().isEmpty())
+            angajat.setSex(angajatCurent.getSex());
+        else
+            angajat.setSex(sexText.getText());
+
+        if(dataNasteriiText.getText().isEmpty())
+            angajat.setDataNasterii(angajatCurent.getDataNasterii());
+        else
+            angajat.setDataNasterii(Date.valueOf(dataNasteriiText.getText()));
+
+        if(salariuText.getText().isEmpty())
+            angajat.setSalariu(angajatCurent.getSalariu());
+        else
+            angajat.setSalariu(Integer.parseInt(salariuText.getText()));
+
+        if(idPunctLucruText.getText().isEmpty())
+            angajat.setIdPunctLucru(angajatCurent.getIdPunctLucru());
+        else
+            angajat.setIdPunctLucru( Integer.parseInt(idPunctLucruText.getText()));
+
+
+             /*  Integer.parseInt(idAngajatText.getText()),
                 numeText.getText(),
                 prenumeText.getText(),
                 cnpText.getText(),
                 adresaText.getText(),
                 sexText.getText(),
                 Date.valueOf(dataNasteriiText.getText()),
-                Integer.getInteger(salariuText.getText()),
-                Integer.getInteger(idPunctLucruText.getText())
-        );
-
+                Integer.parseInt(salariuText.getText()),
+                Integer.parseInt(idPunctLucruText.getText())
+               */
         return angajat;
     }
 

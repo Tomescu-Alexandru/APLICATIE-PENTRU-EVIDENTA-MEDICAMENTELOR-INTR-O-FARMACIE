@@ -20,7 +20,7 @@ public class UserDao {
         this.connection = connection;
 
         try {
-            insertQuery = connection.prepareStatement("INSERT INTO Utilizator VALUES(null,?,?,?,?)");
+            insertQuery = connection.prepareStatement("INSERT INTO Utilizator VALUES(?,?,?,?)");
             selectQueryUserName = connection.prepareStatement("SELECT * FROM Utilizator WHERE Username = ?");
          } catch (SQLException throwables) {
             throwables.printStackTrace();

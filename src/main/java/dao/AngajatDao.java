@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AngajatDao {
 
@@ -15,17 +17,17 @@ public class AngajatDao {
     PreparedStatement updateQuery;
     PreparedStatement deleteQuery;
     PreparedStatement selectQueryById;
+    PreparedStatement selectAllQuery;
 
     public AngajatDao (Connection connection){
         this.connection = connection;
 
         try {
             selectQueryById = connection.prepareStatement("SELECT * FROM Angajat WHERE IDAngajat = ?");
-            insertQuery= connection.prepareStatement("INSERT INTO Angajat VALUES(null, ?,?,?,?,?,?,?,?)");
-            updateQuery= connection.prepareStatement("UPDATE Angajat" +
-                    "SET Nume=?, Prenume=?, CNP=?, Adresa=?, Sex=?, DataNasterii=?, Salariu=?, IDPunctLucru=? " +
-                            "WHERE IDAngajat=?");
+            insertQuery= connection.prepareStatement("INSERT INTO Angajat VALUES(?,?,?,?,?,?,?,?)");
+            updateQuery= connection.prepareStatement("UPDATE Angajat SET Nume=?, Prenume=?, CNP=?, Adresa=?, Sex=?, DataNasterii=?, Salariu=?, IDPunctLucru=? WHERE IDAngajat=?");
             deleteQuery= connection.prepareStatement("DELETE FROM Angajat WHERE IDAngajat=?");
+            selectAllQuery = connection.prepareStatement("SELECT * FROM Angajat");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -55,6 +57,32 @@ public class AngajatDao {
             throwables.printStackTrace();
         }
         return new Angajat();
+    }
+
+    public List<Angajat> selectAll(){
+        try {
+            ResultSet resultSet = selectAllQuery.executeQuery();
+            List<Angajat> angajati = new ArrayList<>();
+            while(resultSet.next()){
+                Angajat angajat = new Angajat(
+                        resultSet.getInt("IDAngajat"),
+                        resultSet.getString("Nume"),
+                        resultSet.getString("Prenume"),
+                        resultSet.getString("CNP"),
+                        resultSet.getString("Adresa"),
+                        resultSet.getString("Sex"),
+                        resultSet.getDate("DataNasterii"),
+                        resultSet.getInt("Salariu"),
+                        resultSet.getInt("IDPunctLucru")
+                );
+                angajati.add(angajat);
+            }
+            return angajati;
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     public boolean insert(Angajat angajat){

@@ -5,6 +5,7 @@ import dbConnection.DBConnection;
 import model.Angajat;
 
 import java.sql.Connection;
+import java.util.List;
 
 public class AngajatController {
 
@@ -22,4 +23,6 @@ public class AngajatController {
     public boolean updateAngajat(Angajat angajat){return angajatDao.update(angajat);}
 
     public boolean deleteAngajat(int id){return angajatDao.delete(id);}
+
+    public List<Angajat> selectAll(){return angajatDao.selectAll();}
 }

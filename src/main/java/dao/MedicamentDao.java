@@ -19,10 +19,8 @@ public class MedicamentDao {
         this.connection =connection;
 
         try {
-            insertQuery = connection.prepareStatement("INSERT INTO Medicament VALUES (null, ?,?,?,?,?)");
-            updateQuery = connection.prepareStatement("UPDATE Medicament " +
-                    "SET NumeMedicament=?, Valabilitate =?, IDCategorie=?, NumeProducator=?, Gramaj=?" +
-                    "WHERE IDMedicament =?");
+            insertQuery = connection.prepareStatement("INSERT INTO Medicament VALUES (?,?,?,?,?)");
+            updateQuery = connection.prepareStatement("UPDATE Medicament SET NumeMedicament=?, Valabilitate =?, IDCategorie=?, NumeProducator=?, Gramaj=? WHERE IDMedicament =?");
             deleteQuery = connection.prepareStatement("DELETE FROM Medicament WHERE IDMedicament =?");
             selectQuery = connection.prepareStatement("SELECT * FROM Medicament");
         } catch (SQLException throwables) {
