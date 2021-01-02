@@ -1,10 +1,13 @@
 package dao;
 
+import gui.ResultsPage;
 import model.Medicament;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MedicamentDao {
 
@@ -14,6 +17,10 @@ public class MedicamentDao {
     PreparedStatement updateQuery;
     PreparedStatement deleteQuery;
     PreparedStatement selectQuery;
+    PreparedStatement selectById;
+    PreparedStatement selectAllFromCategorie;
+    PreparedStatement selectAllFromFurnizor;
+    PreparedStatement selectMedicamentWithYear;
 
     public MedicamentDao (Connection connection){
         this.connection =connection;
@@ -23,6 +30,10 @@ public class MedicamentDao {
             updateQuery = connection.prepareStatement("UPDATE Medicament SET NumeMedicament=?, Valabilitate =?, IDCategorie=?, NumeProducator=?, Gramaj=? WHERE IDMedicament =?");
             deleteQuery = connection.prepareStatement("DELETE FROM Medicament WHERE IDMedicament =?");
             selectQuery = connection.prepareStatement("SELECT * FROM Medicament");
+            selectById = connection.prepareStatement("SELECT * FROM Medicament WHERE IDMedicament=?");
+            selectAllFromCategorie = connection.prepareStatement("SELECT M.NumeMedicament FROM Medicament M JOIN Categorie C ON C.IDCategorie =M.IDCategorie WHERE C.NumeCategorie = ?");
+            selectAllFromFurnizor = connection.prepareStatement("SELECT M.NumeMedicament FROM Medicament M JOIN FurnizorMedicament FM ON FM.IDMedicament=M.IDMedicament JOIN Furnizor F ON F.IDFurnizor =FM.IDFurnizor WHERE F.NumeFurnizor = ?");
+            selectMedicamentWithYear = connection.prepareStatement("SELECT M.NumeMedicament, M.Valabilitate FROM Medicament M JOIN Categorie C ON C.IDCategorie=M.IDCategorie  WHERE C.NumeCategorie = ? AND YEAR(Valabilitate)< ?");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -98,6 +109,83 @@ public class MedicamentDao {
             throwables.printStackTrace();
         }
 
+        return new ArrayList<>();
+    }
+
+    public Medicament findbyId(int id){
+        try {
+            selectById.setInt(1,id);
+            ResultSet resultSet = selectById.executeQuery();
+
+            while(resultSet.next()){
+                return new Medicament(
+                       resultSet.getInt("IDMedicament"),
+                       resultSet.getString("NumeMedicament"),
+                       resultSet.getDate("Valabilitate"),
+                       resultSet.getInt("IDCategorie"),
+                       resultSet.getString("NumeProducator"),
+                       resultSet.getInt("Gramaj")
+                );
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return new Medicament();
+    }
+
+    public List<String> selectFromCategorie(String numeCategorie){
+        try {
+            selectAllFromCategorie.setString(1,numeCategorie);
+            ResultSet resultSet = selectAllFromCategorie.executeQuery();
+            List<String> medicamente = new ArrayList<>();
+
+            while(resultSet.next()){
+                medicamente.add(resultSet.getString("NumeMedicament"));
+            }
+            return medicamente;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    public List<String> selectFromFrunizor(String numeFurnizor){
+        try {
+            selectAllFromFurnizor.setString(1,numeFurnizor);
+            ResultSet resultSet = selectAllFromFurnizor.executeQuery();
+            List<String> medicamente = new ArrayList<>();
+
+            while(resultSet.next()){
+                medicamente.add(resultSet.getString("NumeMedicament"));
+            }
+            return medicamente;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    public List<Medicament> selectWithDate(String numeCategorie, int an){
+        try {
+            selectMedicamentWithYear.setString(1,numeCategorie);
+            selectMedicamentWithYear.setInt(2, an);
+            List<Medicament> medicamente= new ArrayList<>();
+
+            ResultSet resultSet = selectMedicamentWithYear.executeQuery();
+            while (resultSet.next()){
+                Medicament medicament = new Medicament();
+                medicament.setNumeMedicament(resultSet.getString("NumeMedicament"));
+                medicament.setValabitilate(resultSet.getDate("Valabilitate"));
+
+                medicamente.add(medicament);
+            }
+
+            return medicamente;
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
         return new ArrayList<>();
     }
 

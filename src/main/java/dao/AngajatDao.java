@@ -18,6 +18,7 @@ public class AngajatDao {
     PreparedStatement deleteQuery;
     PreparedStatement selectQueryById;
     PreparedStatement selectAllQuery;
+    PreparedStatement selectByPunctLucru;
 
     public AngajatDao (Connection connection){
         this.connection = connection;
@@ -28,6 +29,7 @@ public class AngajatDao {
             updateQuery= connection.prepareStatement("UPDATE Angajat SET Nume=?, Prenume=?, CNP=?, Adresa=?, Sex=?, DataNasterii=?, Salariu=?, IDPunctLucru=? WHERE IDAngajat=?");
             deleteQuery= connection.prepareStatement("DELETE FROM Angajat WHERE IDAngajat=?");
             selectAllQuery = connection.prepareStatement("SELECT * FROM Angajat");
+            selectByPunctLucru = connection.prepareStatement("SELECT A.Nume, A.Prenume FROM Angajat A JOIN PunctLucru P ON A.IDPunctLucru=P.IDPunctLucru WHERE P.NumePunctLucru=?");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -133,5 +135,26 @@ public class AngajatDao {
             throwables.printStackTrace();
         }
             return false;
+    }
+
+    public List<Angajat> selectAngajatByPunctLucru(String punctLucru){
+        try {
+            selectByPunctLucru.setString(1,punctLucru);
+
+            ResultSet resultSet= selectByPunctLucru.executeQuery();
+            List<Angajat> angajati= new ArrayList<>();
+            while(resultSet.next()){
+                Angajat angajat = new Angajat();
+                angajat.setNume(resultSet.getString("Nume"));
+                angajat.setPrenume(resultSet.getString("Prenume"));
+
+                angajati.add(angajat);
+            }
+            return angajati;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return new ArrayList<>();
     }
 }

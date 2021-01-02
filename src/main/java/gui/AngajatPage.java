@@ -31,9 +31,9 @@ public class AngajatPage extends JFrame {
 
     private void initDefaults() {
         setTitle("Angajat Page");
-        setSize(500, 600);
+        setSize(500, 500);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     private void initForm()
@@ -104,12 +104,18 @@ public class AngajatPage extends JFrame {
             Angajat angajat= fromTextToAngajat();
             angajatController.insertAngajat(angajat);
             dispose();
+            Main.currentPage.dispose();
+            MainPage mainPage = new MainPage();
+            Main.setCurrentPage(mainPage);
         });
 
         update.addActionListener(e->{
             Angajat angajat= fromTextToAngajat();
             angajatController.updateAngajat(angajat);
             dispose();
+            Main.currentPage.dispose();
+            MainPage mainPage = new MainPage();
+            Main.setCurrentPage(mainPage);
         });
     }
 

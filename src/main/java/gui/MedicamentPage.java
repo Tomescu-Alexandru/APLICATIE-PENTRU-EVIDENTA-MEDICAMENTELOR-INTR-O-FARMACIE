@@ -2,13 +2,13 @@ package gui;
 
 
 import controller.MedicamentController;
+import main.Main;
 import model.Medicament;
 
 
 import javax.swing.*;
 import java.awt.*;
 import java.sql.Date;
-import java.sql.SQLOutput;
 
 public class MedicamentPage extends JFrame{
 
@@ -29,9 +29,9 @@ public class MedicamentPage extends JFrame{
 
     private void initDefaults() {
         setTitle("Medicament Page");
-        setSize(500, 600);
+        setSize(500, 400);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
 
     void initForm(){
@@ -72,8 +72,11 @@ public class MedicamentPage extends JFrame{
 
         insert.addActionListener(e-> {
             Medicament medicament=formToMedicament();
-            System.out.println(medicament.toString());
             medicamentController.insertMedicament(medicament);
+            dispose();
+            Main.currentPage.dispose();
+            MainPage mainPage = new MainPage();
+            Main.setCurrentPage(mainPage);
         });
 
         update = new JButton("Update");
@@ -81,24 +84,47 @@ public class MedicamentPage extends JFrame{
 
         update.addActionListener(e-> {
             medicamentController.updateMedicament(formToMedicament());
+            dispose();
+            Main.currentPage.dispose();
+            MainPage mainPage = new MainPage();
+            Main.setCurrentPage(mainPage);
         });
 
     }
 
     Medicament formToMedicament(){
-        System.out.println( Integer.parseInt(idMedicamentText.getText()));
-        System.out.println( numeMedicamentText.getText());
-        System.out.println( Date.valueOf(valabilitateText.getText()));
-        System.out.println(Integer.parseInt(idCategorieText.getText()));
-        System.out.println(numeProducatorText.getText());
-        System.out.println(Integer.parseInt(gramajText.getText()));
-        return new Medicament(
-                Integer.parseInt(idMedicamentText.getText()),
-                numeMedicamentText.getText(),
-                Date.valueOf(valabilitateText.getText()),
-                Integer.parseInt(idCategorieText.getText()),
-                numeProducatorText.getText(),
-                Integer.parseInt(gramajText.getText())
-        );
+        Medicament medicamentCurent =medicamentController.findById(Integer.parseInt(idMedicamentText.getText()));
+        Medicament medicament = new Medicament();
+
+        medicament.setIdMedicament(medicamentCurent.getIdMedicament());
+
+        if(numeMedicamentText.getText().isEmpty())
+            medicament.setNumeMedicament(medicamentCurent.getNumeMedicament());
+        else
+            medicament.setNumeMedicament(numeMedicamentText.getText());
+
+        if(valabilitateText.getText().isEmpty())
+            medicament.setValabitilate(medicamentCurent.getValabitilate());
+        else
+            medicament.setValabitilate(Date.valueOf(valabilitateText.getText()));
+
+        if(idCategorieText.getText().isEmpty())
+            medicament.setIdCategorie(medicamentCurent.getIdCategorie());
+        else
+            medicament.setIdCategorie(Integer.parseInt(idCategorieText.getText()));
+
+        if(numeProducatorText.getText().isEmpty())
+            medicament.setNumeProducator(medicamentCurent.getNumeProducator());
+        else
+            medicament.setNumeProducator(numeProducatorText.getText());
+
+        if(gramajText.getText().isEmpty())
+            medicament.setGramaj(medicamentCurent.getGramaj());
+        else
+            medicament.setGramaj(Integer.parseInt(gramajText.getText()));
+
+
+
+        return medicament;
     }
 }

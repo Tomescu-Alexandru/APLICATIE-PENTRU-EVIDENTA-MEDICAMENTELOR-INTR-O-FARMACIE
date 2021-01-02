@@ -25,4 +25,6 @@ public class AngajatController {
     public boolean deleteAngajat(int id){return angajatDao.delete(id);}
 
     public List<Angajat> selectAll(){return angajatDao.selectAll();}
+
+    public List<Angajat> selectAngajatByPunctLucru(String punctLucru){return angajatDao.selectAngajatByPunctLucru(punctLucru);}
 }

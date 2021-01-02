@@ -23,13 +23,16 @@ public class MainPage extends JFrame {
     EmptyBorder border = new EmptyBorder(0, 10, 0, 0);
     MedicamentController medicamentController = new MedicamentController();
     JTable medicamentTable,angajatTable;
-    JButton insertM,updateM,deleteM,insertA,updateA, deleteA;
+    JButton insertM,deleteM,insertA, deleteA;
+    JButton simpleQuery1, simpleQuery2, simpleQuery3, simpleQuery4, simpleQuery5, simpleQuery6;
+    JPanel simpleQuery3Panel;
+    JTextField simpleQuery3Parameter;
 
     public static boolean fromUpdate;
 
     public MainPage(){
         setTitle("Main Page");
-        setSize(1920, 1080);
+        setSize(1920, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         System.out.println(getRanduri());
@@ -39,6 +42,7 @@ public class MainPage extends JFrame {
         if(getRanduri()==4)
         initAngajat();
 
+        initSimple();
 
         add(jPanel);
 
@@ -52,14 +56,14 @@ public class MainPage extends JFrame {
         else return 3;
     }
 
-    private void initMedicamente()
-    {
+    private void initMedicamente() {
         insertM= new JButton("Insert/Update");
+        insertM.setBorder(border);
         deleteM= new JButton("Delete");
+        deleteM.setBorder(border);
 
-
-        medicamentPanel = new JPanel(new GridLayout(1,2));
-        butoaneM = new JPanel(new GridLayout(4,1));
+        medicamentPanel = new JPanel(new GridLayout(1,2,10,10));
+        butoaneM = new JPanel(new GridLayout(4,1,10,10));
 
         butoaneM.add(insertM);
         butoaneM.add(deleteM);
@@ -71,17 +75,13 @@ public class MainPage extends JFrame {
 
         insertM.addActionListener(e->{
             MedicamentPage medicamentPage = new MedicamentPage();
-            if(!medicamentPage.isDisplayable())
-            {
-                dispose();
-                new MainPage();
-            }
         });
 
         deleteM.addActionListener(e->{
             medicamentController.deleteMedicament(Integer.parseInt(deleteId.getText()));
             dispose();
-            new MainPage();
+            MainPage mainPage = new MainPage();
+            Main.setCurrentPage(mainPage);
         });
 
         String []collumNames ={"ID Medicament","Nume Medicament", "Valabilitate", "IDCategorie","Nume Producator", "Gramaj"};
@@ -102,13 +102,14 @@ public class MainPage extends JFrame {
         jPanel.add(medicamentPanel);
     }
 
-    private void initAngajat()
-    {
+    private void initAngajat() {
         insertA= new JButton("Insert/Update");
+        insertA.setBorder(border);
         deleteA= new JButton("Delete");
+        deleteA.setBorder(border);
 
-        angajatPanel = new JPanel(new GridLayout(1,2));
-        butoaneA = new JPanel(new GridLayout(4,1));
+        angajatPanel = new JPanel(new GridLayout(1,2,10,10));
+        butoaneA = new JPanel(new GridLayout(4,1,10,10));
 
         butoaneA.add(insertA);
         butoaneA.add(deleteA);
@@ -120,17 +121,13 @@ public class MainPage extends JFrame {
 
         insertA.addActionListener(e->{
             AngajatPage angajatPage =new AngajatPage();
-            if(!angajatPage.isDisplayable())
-            {
-                dispose();
-                new MainPage();
-            }
         });
 
         deleteA.addActionListener(e->{
             angajatController.deleteAngajat(Integer.getInteger(deleteId.getText()));
             dispose();
-            new MainPage();
+           MainPage mainPage= new MainPage();
+           Main.setCurrentPage(mainPage);
         });
 
         String [] collumNames ={"ID Angajat","Nume","Prenume","CNP","Adresa","Sex","Data Nasterii", "Salariu","ID Punct Lucru"};
@@ -152,5 +149,53 @@ public class MainPage extends JFrame {
         angajatPanel.add(new JScrollPane(angajatTable));
 
         jPanel.add(angajatPanel);
+    }
+
+    void initSimple(){
+        if(getRanduri()==4)
+        simplePanel = new JPanel(new GridLayout(1,6,10,10));
+        else   simplePanel = new JPanel(new GridLayout(1,3,10,10));
+
+
+        simpleQuery1 = new JButton("Simple Query 1");
+        simpleQuery1.setBorder(border);
+
+        simplePanel.add(simpleQuery1);
+        simpleQuery1.addActionListener(e-> QueryHandler.query1());
+
+        simpleQuery2 = new JButton("Simple Query 2");
+        simpleQuery2.setBorder(border);
+
+        simplePanel.add(simpleQuery2);
+        simpleQuery2.addActionListener(e-> QueryHandler.query2());
+
+        simpleQuery3Panel = new JPanel(new GridLayout(2,1));
+        simpleQuery3 = new JButton("Simple Query 3");
+        simpleQuery3.setBorder(border);
+        simpleQuery3Parameter = new JTextField();
+        simpleQuery3Panel.add(simpleQuery3);
+        simpleQuery3Panel.add(simpleQuery3Parameter);
+
+        simpleQuery3.addActionListener(e-> {
+            if(simpleQuery3Parameter.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "An invalid");
+                simpleQuery3Parameter.setText("");
+                simpleQuery3Parameter.requestFocus();
+            }
+            else QueryHandler.query3(Integer.parseInt(simpleQuery3Parameter.getText()));
+        });
+
+        simplePanel.add(simpleQuery3Panel);
+
+        if(getRanduri()==4){
+            simpleQuery4 = new JButton("Simple Query 4");
+            simpleQuery4.setBorder(border);
+
+            simplePanel.add(simpleQuery4);
+
+            simpleQuery4.addActionListener(e->QueryHandler.query4());
+        }
+
+        jPanel.add(simplePanel);
     }
 }

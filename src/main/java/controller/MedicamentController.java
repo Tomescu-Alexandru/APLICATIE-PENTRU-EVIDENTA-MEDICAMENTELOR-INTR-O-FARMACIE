@@ -24,4 +24,12 @@ public class MedicamentController {
 
     public List<Medicament> selectMedicamente (){return medicamentDao.selectAll();}
 
+    public List<String> selectFromCategorie(String numeCategorie){return medicamentDao.selectFromCategorie(numeCategorie);}
+
+    public Medicament findById(int id){return medicamentDao.findbyId(id);}
+
+    public List<String> selectFromFurnizor(String numeFurnizor){return medicamentDao.selectFromFrunizor(numeFurnizor);}
+
+    public List<Medicament> selectWithDate(String numeCategorie, int an){return medicamentDao.selectWithDate(numeCategorie, an);}
+
 }

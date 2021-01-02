@@ -43,7 +43,8 @@ public class LoginPage extends JFrame {
         if (!user.equals(new User())) {
             if(user.getParola().equals(new String(passwordField.getPassword()))){
             Main.setCurrentUser(user);
-            new MainPage();
+            MainPage mainPage =new MainPage();
+            Main.setCurrentPage(mainPage);
             dispose();
             } else {
                 JOptionPane.showMessageDialog(null, "Credentiale invalide");
