@@ -2,13 +2,16 @@ package controller;
 
 import dao.MedicamentDao;
 import dbConnection.DBConnection;
+import model.Categorie;
 import model.Medicament;
+import model.MedicamentStoc;
 
 import java.sql.Connection;
 import java.util.List;
 
 public class MedicamentController {
 
+    //aceasta clasa este folosita pentru a face legatura intre actiunea realizata de utilizator si raspunsul pe care trebuie sa il ofere aplicatia pentru cererei legate de tabela Medicament
     private MedicamentDao medicamentDao;
 
     public MedicamentController(){
@@ -31,5 +34,11 @@ public class MedicamentController {
     public List<String> selectFromFurnizor(String numeFurnizor){return medicamentDao.selectFromFrunizor(numeFurnizor);}
 
     public List<Medicament> selectWithDate(String numeCategorie, int an){return medicamentDao.selectWithDate(numeCategorie, an);}
+
+    public List<MedicamentStoc> selectMedicamentPunctLucru(int id){return medicamentDao.selectMedicamentPunctLucru(id);}
+
+    public List<MedicamentStoc> selectMaxim(){return  medicamentDao.selectMaxim();}
+
+    public List<Categorie> selectAllCategorie(){return  medicamentDao.selectAllCategorie();}
 
 }

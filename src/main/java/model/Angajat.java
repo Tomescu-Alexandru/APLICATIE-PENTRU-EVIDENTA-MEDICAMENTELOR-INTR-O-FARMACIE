@@ -13,7 +13,7 @@ import java.sql.Date;
 @EqualsAndHashCode
 
 public class Angajat {
-
+    //am folosit aceasta clasa pentru a putea salva datele Angajatului
     private int idAngajat;
     private String nume;
     private String prenume;

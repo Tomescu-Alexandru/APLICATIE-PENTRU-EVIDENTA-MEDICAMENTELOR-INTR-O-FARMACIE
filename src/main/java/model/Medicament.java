@@ -12,7 +12,7 @@ import java.sql.Date;
 @EqualsAndHashCode
 
 public class Medicament {
-
+    //am folosit aceasta clasa pentru a putea salva datele Medicamentelor
     private int idMedicament;
     private String numeMedicament;
     private Date valabitilate;

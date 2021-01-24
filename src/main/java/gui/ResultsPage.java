@@ -1,7 +1,7 @@
 package gui;
 
 import javax.swing.*;
-
+//aceasta clasa este folosita pentru a afisa pe ecran un tabel cu rezultatele cererilor
 public class ResultsPage extends JFrame {
 
     public ResultsPage(JScrollPane table){

@@ -6,7 +6,7 @@ import model.User;
 
 import javax.swing.*;
 
-
+//am folosit aceasta clasa pentru a porni interfata grafica si a retine atat Utilizatorul curent, cat si Pagina curenta
 public class Main {
     public static User currentUser;
     public static JFrame currentPage;

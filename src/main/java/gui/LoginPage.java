@@ -41,32 +41,30 @@ public class LoginPage extends JFrame {
     private void loginMethod() {
         User user = userController.getUserByName(usernameField.getText());
         if (!user.equals(new User())) {
+            //verificam daca datele introduse de utilizator sunt corecte
             if(user.getParola().equals(new String(passwordField.getPassword()))){
+                //in caz afirmativ salvam utilizatorul si trecem la pagina principala
             Main.setCurrentUser(user);
             MainPage mainPage =new MainPage();
             Main.setCurrentPage(mainPage);
             dispose();
             } else {
+                //in caz contrar cerem utilizatorului sa le introduca din nou
                 JOptionPane.showMessageDialog(null, "Credentiale invalide");
                 usernameField.setText("");
                 passwordField.setText("");
                 usernameField.requestFocus();
             }
-        } else {
-            JOptionPane.showMessageDialog(null, "Credentiale invalide");
-            usernameField.setText("");
-            passwordField.setText("");
-            usernameField.requestFocus();
         }
     }
-
+    //dimensiunile si varianta de close
     private void initDefaults() {
         setTitle("Login Page");
         setSize(300, 100);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-
+ // am creat cele 2 campuri si butonele
     private void initButtonsText() {
         userLabel = new JLabel("Username:");
         userLabel.setBorder(border);
@@ -80,7 +78,7 @@ public class LoginPage extends JFrame {
         loginButton = new JButton("Login");
         cancelButton = new JButton("Cancel");
     }
-
+        //am adaugat cele de mai sus in interfata
     private void initPanel() {
         JPanel panel = new JPanel(new GridLayout(3, 2));
         panel.add(userLabel);

@@ -25,10 +25,10 @@ public class MainPage extends JFrame {
     JTable medicamentTable,angajatTable;
     JButton insertM,deleteM,insertA, deleteA;
     JButton simpleQuery1, simpleQuery2, simpleQuery3, simpleQuery4, simpleQuery5, simpleQuery6;
+    JButton complexQuery1, complexQuery2, complexQuery3, complexQuery4;
     JPanel simpleQuery3Panel;
     JTextField simpleQuery3Parameter;
 
-    public static boolean fromUpdate;
 
     public MainPage(){
         setTitle("Main Page");
@@ -44,18 +44,19 @@ public class MainPage extends JFrame {
 
         initSimple();
 
+        initComplex();
         add(jPanel);
-
         setVisible(true);
 
-    }
 
+    }
+    //verific daca utilizatorul este sau nu administrator pentru a stabili la ce query-uri are acces
     private int getRanduri(){
         if(Main.getCurrentUser().getRol().equals("admin"))
             return 4;
         else return 3;
     }
-
+    //am adaugat un panou cu butoanele de insert,update,delete si un tabel cu medicamentele existente
     private void initMedicamente() {
         insertM= new JButton("Insert/Update");
         insertM.setBorder(border);
@@ -68,8 +69,8 @@ public class MainPage extends JFrame {
         butoaneM.add(insertM);
         butoaneM.add(deleteM);
 
-        JTextField deleteId= new JTextField();
-        butoaneM.add(deleteId);
+        JTextField deleteIdM= new JTextField();
+        butoaneM.add(deleteIdM);
 
         medicamentPanel.add(butoaneM);
 
@@ -78,7 +79,7 @@ public class MainPage extends JFrame {
         });
 
         deleteM.addActionListener(e->{
-            medicamentController.deleteMedicament(Integer.parseInt(deleteId.getText()));
+            medicamentController.deleteMedicament(Integer.parseInt(deleteIdM.getText()));
             dispose();
             MainPage mainPage = new MainPage();
             Main.setCurrentPage(mainPage);
@@ -102,6 +103,7 @@ public class MainPage extends JFrame {
         jPanel.add(medicamentPanel);
     }
 
+    //am adaugat un panou cu butoanele de insert,update,delete si un tabel cu angajatii existenti
     private void initAngajat() {
         insertA= new JButton("Insert/Update");
         insertA.setBorder(border);
@@ -114,8 +116,8 @@ public class MainPage extends JFrame {
         butoaneA.add(insertA);
         butoaneA.add(deleteA);
 
-        JTextField deleteId= new JTextField();
-        butoaneA.add(deleteId);
+        JTextField deleteIdA= new JTextField();
+        butoaneA.add(deleteIdA);
 
         angajatPanel.add(butoaneA);
 
@@ -124,7 +126,7 @@ public class MainPage extends JFrame {
         });
 
         deleteA.addActionListener(e->{
-            angajatController.deleteAngajat(Integer.getInteger(deleteId.getText()));
+            angajatController.deleteAngajat(Integer.parseInt(deleteIdA.getText()));
             dispose();
            MainPage mainPage= new MainPage();
            Main.setCurrentPage(mainPage);
@@ -151,28 +153,33 @@ public class MainPage extends JFrame {
         jPanel.add(angajatPanel);
     }
 
+    //am adaugat un panou cu butoane pentru fiecare cerere simpla si text pentru a arata ce face fiecare
+    //iar pentru cele care au un parametru variabil am adaugat si o caseta de text pentru a-l introduce
+    //toate cererile vor afisa un tabel cu rezultatele
     void initSimple(){
-        if(getRanduri()==4)
-        simplePanel = new JPanel(new GridLayout(1,6,10,10));
-        else   simplePanel = new JPanel(new GridLayout(1,3,10,10));
+        simplePanel = new JPanel(new FlowLayout(FlowLayout.CENTER,100,100));
 
 
-        simpleQuery1 = new JButton("Simple Query 1");
+        simpleQuery1 = new JButton("Medicament Simple Query 1");
+        simpleQuery1.setToolTipText("Selecteaza medicamentele din categoria Durere");
         simpleQuery1.setBorder(border);
 
         simplePanel.add(simpleQuery1);
         simpleQuery1.addActionListener(e-> QueryHandler.query1());
 
-        simpleQuery2 = new JButton("Simple Query 2");
+        simpleQuery2 = new JButton("Medicament Simple Query 2");
+        simpleQuery2.setToolTipText("Selecteaza medicamentele de la furnizorul Pharmafarm");
         simpleQuery2.setBorder(border);
 
         simplePanel.add(simpleQuery2);
         simpleQuery2.addActionListener(e-> QueryHandler.query2());
 
         simpleQuery3Panel = new JPanel(new GridLayout(2,1));
-        simpleQuery3 = new JButton("Simple Query 3");
+        simpleQuery3 = new JButton("Medicament Simple Query 3");
+        simpleQuery3.setToolTipText("Selecteaza medicamentele din categoria Durere care au o valabilitate pana in anul dorit");
         simpleQuery3.setBorder(border);
         simpleQuery3Parameter = new JTextField();
+        simpleQuery3Parameter.setToolTipText("An");
         simpleQuery3Panel.add(simpleQuery3);
         simpleQuery3Panel.add(simpleQuery3Parameter);
 
@@ -188,14 +195,93 @@ public class MainPage extends JFrame {
         simplePanel.add(simpleQuery3Panel);
 
         if(getRanduri()==4){
-            simpleQuery4 = new JButton("Simple Query 4");
+            simpleQuery4 = new JButton("Angajat Simple Query 1");
             simpleQuery4.setBorder(border);
-
+            simpleQuery4.setToolTipText("Selecteaza toti angajatii de la punctul de lucru 'Farmacia Denis'");
             simplePanel.add(simpleQuery4);
 
             simpleQuery4.addActionListener(e->QueryHandler.query4());
+
+            simpleQuery5 = new JButton("Angajat Simple Query 2");
+            simpleQuery5.setToolTipText("Selecteaza toti angajatii care au utilizatori pentru aplicatie");
+            simpleQuery5.setBorder(border);
+            simplePanel.add(simpleQuery5);
+
+            simpleQuery5.addActionListener(e->QueryHandler.query5());
+
+            simpleQuery6 = new JButton("Angajat Simple Query 3");
+            simpleQuery6.setBorder(border);
+            simpleQuery6.setToolTipText("Selecteaza toti angajatii de la punctul de lucru 'Farmacia Tei', care au salariul mai mare sau egal cu o valoare dorita");
+            JPanel query6Variabil = new JPanel(new GridLayout(2,1));
+            query6Variabil.add(simpleQuery6);
+            JTextField query6Text= new JTextField();
+            query6Text.setToolTipText("Salariu");
+            query6Variabil.add(query6Text);
+
+            simplePanel.add(query6Variabil);
+
+            simpleQuery6.addActionListener(e->{
+                if(query6Text.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Salariu Invalid");
+                    query6Text.setText("");
+                    query6Text.requestFocus();
+                }
+                else QueryHandler.guery6(Integer.parseInt(query6Text.getText()));
+            });
         }
 
+
         jPanel.add(simplePanel);
+    }
+    //am adaugat un panou cu butoane pentru fiecare cerere complexa si text pentru a arata ce face fiecare
+    //iar pentru cele care au un parametru variabil am adaugat si o caseta de text pentru a-l introduce
+    //toate cererile vor afisa un tabel cu rezultatele
+    void initComplex(){
+        complexPanel= new JPanel(new FlowLayout(FlowLayout.CENTER,100,100));
+
+        complexQuery1 = new JButton("Medicament Complex Query 1");
+        complexQuery1.setToolTipText("Selecteaza toate medicamentele de la punctul de lucru la care lucreaza angajatul curent, al caror pret/bucata e mai mare decat media tuturor medicamentelor");
+        complexQuery1.setBorder(border);
+        complexPanel.add(complexQuery1);
+
+        complexQuery1.addActionListener(e->QueryHandler.complexQuery1());
+
+        complexQuery2 = new JButton("Medicament Complex Query 2");
+        complexQuery2.setToolTipText("Selecteaza toate medicamentele, cat si stocul lor, in ordine descrescatoare, de la farmacia cu cel mai mare numar de medicamente");
+        complexQuery2.setBorder(border);
+
+        complexPanel.add(complexQuery2);
+        complexQuery2.addActionListener(e-> QueryHandler.complexQuery2());
+
+        if(getRanduri()==4) {
+            complexQuery3 = new JButton("Angajat Complex Query 1");
+            complexQuery3.setToolTipText("Selecteaza punctele de lucru pentru care media salariilor angajatilor este mai mare decat media salariului pe intreaga companie");
+            complexQuery3.setBorder(border);
+            complexQuery3.addActionListener(e -> QueryHandler.complexQuery3());
+
+            complexPanel.add(complexQuery3);
+
+            complexQuery4 = new JButton("Angajat Complex Query 2");
+            complexQuery4.setToolTipText("Selecteaza toti angajatii de la punctul de lucru care are cel mai mare stoc din medicamentul selectat");
+            complexQuery4.setBorder(border);
+
+            JTextField complexQuery4Text = new JTextField();
+            complexQuery4Text.setToolTipText("Nume Medicament");
+            JPanel complexQuery4Panel = new JPanel(new GridLayout(2,1));
+            complexQuery4Panel.add(complexQuery4);
+            complexQuery4Panel.add(complexQuery4Text);
+            complexPanel.add(complexQuery4Panel);
+
+            complexQuery4.addActionListener(e->{
+                if(complexQuery4Text.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Medicament Invalid");
+                    complexQuery4Text.setText("");
+                    complexQuery4Text.requestFocus();
+                }
+                else QueryHandler.complexQuery4(complexQuery4Text.getText());
+            });
+        }
+
+        jPanel.add(complexPanel);
     }
 }

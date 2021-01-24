@@ -9,9 +9,9 @@ import lombok.*;
 @ToString
 @EqualsAndHashCode
 
-public class User {
+public class User extends AngajatPunctLucru{
+        //am folosit aceasta clasa pentru a adauga la clasa Angajat detaliile despre utilizator
         private String username;
         private String parola;
-        private int idAngajat;
         private String rol;
 }

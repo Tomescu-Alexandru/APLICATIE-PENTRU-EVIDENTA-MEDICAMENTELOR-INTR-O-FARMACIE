@@ -1,13 +1,12 @@
 package dao;
 
-import gui.ResultsPage;
+import model.Categorie;
 import model.Medicament;
+import model.MedicamentStoc;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MedicamentDao {
 
@@ -21,11 +20,15 @@ public class MedicamentDao {
     PreparedStatement selectAllFromCategorie;
     PreparedStatement selectAllFromFurnizor;
     PreparedStatement selectMedicamentWithYear;
+    PreparedStatement selectMedicamentFromPunctLucru;
+    PreparedStatement selectMaximMedicament;
+    PreparedStatement selectCategorie;
 
     public MedicamentDao (Connection connection){
         this.connection =connection;
 
         try {
+            //aici am scris toate cererile care sunt folosite de aplicatie si au legatura cu tabela Medicamente
             insertQuery = connection.prepareStatement("INSERT INTO Medicament VALUES (?,?,?,?,?)");
             updateQuery = connection.prepareStatement("UPDATE Medicament SET NumeMedicament=?, Valabilitate =?, IDCategorie=?, NumeProducator=?, Gramaj=? WHERE IDMedicament =?");
             deleteQuery = connection.prepareStatement("DELETE FROM Medicament WHERE IDMedicament =?");
@@ -34,12 +37,16 @@ public class MedicamentDao {
             selectAllFromCategorie = connection.prepareStatement("SELECT M.NumeMedicament FROM Medicament M JOIN Categorie C ON C.IDCategorie =M.IDCategorie WHERE C.NumeCategorie = ?");
             selectAllFromFurnizor = connection.prepareStatement("SELECT M.NumeMedicament FROM Medicament M JOIN FurnizorMedicament FM ON FM.IDMedicament=M.IDMedicament JOIN Furnizor F ON F.IDFurnizor =FM.IDFurnizor WHERE F.NumeFurnizor = ?");
             selectMedicamentWithYear = connection.prepareStatement("SELECT M.NumeMedicament, M.Valabilitate FROM Medicament M JOIN Categorie C ON C.IDCategorie=M.IDCategorie  WHERE C.NumeCategorie = ? AND YEAR(Valabilitate)< ?");
+            selectMedicamentFromPunctLucru = connection.prepareStatement("SELECT M.NumeMedicament, MP.Stoc, FM.PretBucata FROM Medicament M  JOIN MedicamentPunctLucru MP ON MP.IDMedicament=M.IDMedicament  JOIN FurnizorMedicament FM ON FM.IDMedicament=M.IDMedicament WHERE MP.IDPunctLucru =  (SELECT A.IDPunctLucru FROM Angajat A WHERE A.IDAngajat=?)  AND FM.PretBucata > (SELECT AVG(FM1.PretBucata) FROM FurnizorMedicament FM1)");
+            selectMaximMedicament = connection.prepareStatement("SELECT M.NumeMedicament, MP.Stoc, P.NumePunctLucru FROM Medicament M JOIN MedicamentPunctLucru MP ON MP.IDMedicament=M.IDMedicament JOIN PunctLucru P ON P.IDPunctLucru=MP.IDPunctLucru WHERE P.NumePunctLucru =  (SELECT TOP 1 P1.NumePunctLucru FROM PunctLucru P1 JOIN MedicamentPunctLucru MP1 ON MP1.IDPunctLucru=P1.IDPunctLucru GROUP BY P1.NumePunctLucru ORDER BY SUM(MP1.Stoc) DESC) ORDER BY MP.Stoc DESC");
+            selectCategorie = connection.prepareStatement("SELECT * FROM Categorie");
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
     }
-
+    // pentru fiecare cerere am creat o metoda care o executa, salveaza rezultatul si il returneaza pentru a fi folosit mai departe
     public boolean insertMedicament(Medicament medicament){
 
         try {
@@ -182,6 +189,66 @@ public class MedicamentDao {
             }
 
             return medicamente;
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    public List<MedicamentStoc> selectMedicamentPunctLucru(int id){
+        try {
+            selectMedicamentFromPunctLucru.setInt(1,id);
+            ResultSet resultSet = selectMedicamentFromPunctLucru.executeQuery();
+            List<MedicamentStoc> medicamente = new ArrayList<>();
+            while(resultSet.next()){
+                MedicamentStoc medicament = new MedicamentStoc();
+                medicament.setNumeMedicament(resultSet.getString("NumeMedicament"));
+                medicament.setStoc(resultSet.getInt("Stoc"));
+
+                medicamente.add(medicament);
+            }
+            return medicamente;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    public List<MedicamentStoc> selectMaxim(){
+        try {
+            ResultSet resultSet = selectMaximMedicament.executeQuery();
+            List<MedicamentStoc> medicamente= new ArrayList<>();
+            while(resultSet.next()){
+                MedicamentStoc medicamentStoc = new MedicamentStoc();
+                medicamentStoc.setNumeMedicament(resultSet.getString("NumeMedicament"));
+                medicamentStoc.setStoc(resultSet.getInt("Stoc"));
+                medicamentStoc.setNumePunctLucru(resultSet.getString("NumePunctLucru"));
+
+                medicamente.add(medicamentStoc);
+            }
+
+            return medicamente;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return new ArrayList<>();
+    }
+
+    public List<Categorie> selectAllCategorie(){
+        try {
+            ResultSet resultSet = selectCategorie.executeQuery();
+            List<Categorie> categorii= new ArrayList<>();
+
+            while(resultSet.next()){
+                categorii.add(new Categorie(
+                        resultSet.getInt("IDCategorie"),
+                        resultSet.getString("NumeCategorie"),
+                        resultSet.getString("Descriere")
+                ));
+            }
+            return categorii;
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();

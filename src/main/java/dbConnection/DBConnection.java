@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+//am folosit acesata clasa pentru a face conexiunea la baza de date
 public class DBConnection {
 
     private static final String url = "jdbc:sqlserver://ALEXANDRU-TOMES;databaseName=ProiectBD";

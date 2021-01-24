@@ -19,23 +19,24 @@ public class AngajatPage extends JFrame {
 
     JButton insert, update;
     AngajatController angajatController= new AngajatController();
+    private int option;
 
     public AngajatPage() {
         initDefaults();
         initForm();
         add(panel);
-
+        QueryHandler.punctLucru();
         setVisible(true);
     }
 
-
+    //dimensiunile si varianta de close
     private void initDefaults() {
         setTitle("Angajat Page");
         setSize(500, 500);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
-
+    //am creat un formular cu toate campurile pe care le are angajatul in baza de date
     private void initForm()
     {
         idAngajat = new JLabel("IDAngajat");
@@ -100,27 +101,48 @@ public class AngajatPage extends JFrame {
         panel.add(insert);
         panel.add(update);
 
+        //daca utiliatorul vrea sa insereze transformama datele si apelam cererea de insert si in functie de rezultatul ei afisam daca randul a fost inserat sau nu
         insert.addActionListener(e->{
+            option=1;
             Angajat angajat= fromTextToAngajat();
-            angajatController.insertAngajat(angajat);
+            if(angajatController.insertAngajat(angajat))
+                JOptionPane.showMessageDialog(null, "Rand inserat");
+            else
+                JOptionPane.showMessageDialog(null, "Inserarea nu a reusit");
+
             dispose();
             Main.currentPage.dispose();
             MainPage mainPage = new MainPage();
             Main.setCurrentPage(mainPage);
         });
 
+        //daca utilizatorul vrea sa faca update la date verificam daca acesta a introdus un id si in functie de rezultatul ei afisam daca randul a fost modificat sau nu
         update.addActionListener(e->{
-            Angajat angajat= fromTextToAngajat();
-            angajatController.updateAngajat(angajat);
-            dispose();
-            Main.currentPage.dispose();
-            MainPage mainPage = new MainPage();
-            Main.setCurrentPage(mainPage);
+            option=2;
+            if(!idAngajatText.getText().isEmpty()) {
+                Angajat angajat = fromTextToAngajat();
+                if (angajatController.updateAngajat(angajat))
+                    JOptionPane.showMessageDialog(null, "Rand actualizat");
+                else
+                    JOptionPane.showMessageDialog(null, "Actualizarea nu a reusit");
+                dispose();
+                Main.currentPage.dispose();
+                MainPage mainPage = new MainPage();
+                Main.setCurrentPage(mainPage);
+            }
+            else JOptionPane.showMessageDialog(null, "Trebuie adaugat id-ul");
         });
     }
 
+    //in aceasta metoda citesc toate campurile si creez o instanta de Angajat cu acestea
     private Angajat fromTextToAngajat(){
-        Angajat angajatCurent= angajatController.findAngajatById(Integer.parseInt(idAngajatText.getText()));
+        Angajat angajatCurent;
+        //in cazul in care facem update pentru campurile pe care nu le-am completat se vor adauga cele existente in baza de date
+        if(option==2)
+            angajatCurent= angajatController.findAngajatById(Integer.parseInt(idAngajatText.getText()));
+        else
+            angajatCurent = new Angajat();
+
         Angajat angajat = new Angajat();
         angajat.setIdAngajat(angajatCurent.getIdAngajat());
 
